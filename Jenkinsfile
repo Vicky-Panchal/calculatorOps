@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE_NAME = 'vickypanchal:calculator'
+        DOCKER_IMAGE_NAME = 'calculator'
         GITHUB_REPO_URL = 'https://github.com/Vicky-Panchal/calculatorOps.git'
+        DOCKERHUB_CREDENTIALS = credentials('DockerHubCred')
     }
 
     stages {
@@ -18,10 +19,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    // Build Docker image
-                    docker.build("${DOCKER_IMAGE_NAME}", '.')
-                }
+                sh '''
+                docker build -t calculator .
+                '''
             }
         }
 
