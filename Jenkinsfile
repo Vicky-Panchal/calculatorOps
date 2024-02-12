@@ -1,50 +1,51 @@
 pipeline {
     agent any
-    triggers {
-        pollSCM '* * * * *'
+
+    environment {
+        DOCKER_IMAGE_NAME = 'vickypanchal:calculator'
+        GITHUB_REPO_URL = 'https://github.com/Vicky-Panchal/calculatorOps.git'
     }
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Vicky-Panchal/calculatorOps.git'
+                script {
+                    // Checkout the code from the GitHub repository
+                    git branch: 'main', url: "${GITHUB_REPO_URL}"
+                }
             }
         }
-        
+
         stage('Build Docker Image') {
             steps {
-                sh '''
-                docker build -t vickypanchal:spe .
-                '''
+                script {
+                    // Build Docker image
+                    docker.build("${DOCKER_IMAGE_NAME}", '.')
+                }
             }
         }
-        
+
         stage('Push Docker Images') {
             steps {
-                sh '''
-                docker push vickypanchal:spe
-                '''
+                script{
+                    docker.withRegistry('', 'DockerHubCred') {
+                    sh 'docker tag calculator vickypanchal/calculator:latest'
+                    sh 'docker push vickypanchal/calculator'
+                    }
+                 }
             }
         }
-        
-        stage('Run Ansible PLaybook') {
-                    steps {
-                        ansiblePlaybook becomeUser: 'null',
-                        extras: "-e tag=$BUILD_NUMBER -e user=$USER -e image=$IMAGE",
-                        colorized: true,
-                        installation: 'Ansible',
-                        inventory: 'inventory',
-                        playbook: 'deploy-playbook.yml',
-                        sudoUser: 'null'
-                    }
+
+   stage('Run Ansible Playbook') {
+            steps {
+                script {
+                    ansiblePlaybook(
+                        playbook: 'deploy.yml',
+                        inventory: 'inventory'
+                     )
                 }
-    }
-    
-    post {
-        success {
-            echo 'Deployment successful!'
+            }
         }
-        failure {
-            echo 'Deployment failed!'
-        }
+
     }
 }
