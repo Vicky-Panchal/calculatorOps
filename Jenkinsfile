@@ -12,9 +12,7 @@ pipeline {
         
         stage('Build Docker Image') {
             steps {
-                script {
-                    docker.build('calculator', '.').push()
-                }
+                docker build -t vickypanchal:spe .
             }
         }
         
