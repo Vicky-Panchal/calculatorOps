@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'git@github.com:Vicky-Panchal/calculatorOps.git'
+                git branch: 'main', url: 'https://github.com/Vicky-Panchal/calculatorOps.git'
             }
         }
         
