@@ -20,14 +20,9 @@ pipeline {
         
         stage('Push Docker Images') {
             steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'DockerHubCred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        docker.withRegistry('https://index.docker.io/v1/', 'docker-registry-credentials') {
-                            docker.image('calculator').push("${env.BUILD_NUMBER}")
-                            docker.image('calculator').push('latest')
-                        }
-                    }
-                }
+                sh '''
+                docker push vickypanchal:spe
+                '''
             }
         }
         
