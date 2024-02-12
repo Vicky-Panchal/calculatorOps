@@ -1,9 +1,5 @@
 pipeline {
-    agent { 
-        node {
-            label 'docker-agent-alpine'
-        }
-    }
+    agent any
     triggers {
         pollSCM '* * * * *'
     }
@@ -35,17 +31,17 @@ pipeline {
             }
         }
         
-        stage('Run Ansible Playbook') {
-            steps {
-                script {
-                    ansiblePlaybook(
-                        playbook: 'deploy.yml',
+        stage('Run Ansible PLaybook') {
+                    steps {
+                        ansiblePlaybook becomeUser: 'null',
+                        extras: "-e tag=$BUILD_NUMBER -e user=$USER -e image=$IMAGE",
+                        colorized: true,
+                        installation: 'Ansible',
                         inventory: 'inventory',
-                        extras: "-e docker_image_tag=${env.BUILD_NUMBER}"
-                    )
+                        playbook: 'deploy-playbook.yml',
+                        sudoUser: 'null'
+                    }
                 }
-            }
-        }
     }
     
     post {
