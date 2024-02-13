@@ -16,20 +16,19 @@ pipeline {
                 }
             }
         }
-
-        stage('Testing') {
-            steps {
-                sh '''
-                npm install
-                npm run test
-                '''
-            }
-        }
     
         stage('Build Docker Image') {
             steps {
                 sh '''
                 docker build -t calculator .
+                '''
+            }
+        }
+
+        stage('Testing') {
+            steps {
+                sh '''
+                npm run test
                 '''
             }
         }
