@@ -17,6 +17,14 @@ pipeline {
             }
         }
 
+        stage('Testing') {
+            steps {
+                sh '''
+                npm run test
+                '''
+            }
+        }
+    
         stage('Build Docker Image') {
             steps {
                 sh '''
