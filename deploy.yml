@@ -20,5 +20,10 @@
       service:
         name: docker
         state: started
+    
+    - name: Remove existing container if running
+      shell: docker rm -f calculator
+      ignore_errors: true
+
     - name: Running container
-      shell: docker run -it -d --name new_calculator4 vickypanchal/calculator
+      shell: docker run -it -d --name calculator vickypanchal/calculator
